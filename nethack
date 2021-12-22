@@ -1,0 +1,37 @@
+#!/bin/sh
+
+# local settings
+localdir=~
+localdotfiledir="${localdir}"
+localvardir="${localdir}/nethackdir"
+
+
+containerdotfiledir="/root"
+containervardir="/nethack/games/lib/nethackdir"
+
+logfiles="logfile record xlogfile"
+
+if [ ! -e ${localdotfiledir}/.nethackrc ]; then
+    touch ${localdotfiledir}/.nethackrc
+fi
+args="-v ${localdotfiledir}/.nethackrc:${containerdotfiledir}/.nethackrc"
+
+if [ ! -d ${localvardir} ]; then
+    mkdir -p ${localvardir}
+fi
+
+for f in $logfiles
+do
+    if [ ! -e ${localvardir}/$f ]; then
+        touch ${localvardir}/$f
+    fi
+    args="${args} -v ${localvardir}/$f:${containervardir}/$f"
+done
+
+if [ ! -d ${localvardir}/save ]; then
+    mkdir -p ${localvardir}/save
+fi
+
+args="${args} -v ${localvardir}/save:${containervardir}/save"
+
+docker run --rm -it --name nethack $args shihashi/nethack "$@"
