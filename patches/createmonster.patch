@@ -1,0 +1,20 @@
+--- NetHack-NetHack-3.6.6_Released/src/cmd.c
++++ newdir/src/cmd.c
+@@ -909,7 +909,7 @@
+ STATIC_PTR int
+ wiz_genesis(VOID_ARGS)
+ {
+-    if (wizard)
++    if (TRUE || wizard)
+         (void) create_particular();
+     else
+         pline(unavailcmd, visctrl((int) cmd_from_func(wiz_genesis)));
+@@ -3522,7 +3522,7 @@
+     { C('e'), "wizdetect", "reveal hidden things within a small radius",
+             wiz_detect, IFBURIED | AUTOCOMPLETE | WIZMODECMD },
+     { C('g'), "wizgenesis", "create a monster",
+-            wiz_genesis, IFBURIED | AUTOCOMPLETE | WIZMODECMD },
++            wiz_genesis, IFBURIED | AUTOCOMPLETE },
+     { C('i'), "wizidentify", "identify all items in inventory",
+             wiz_identify, IFBURIED | AUTOCOMPLETE | WIZMODECMD },
+     { '\0', "wizintrinsic", "set an intrinsic",
