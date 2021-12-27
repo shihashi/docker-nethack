@@ -1,0 +1,28 @@
+--- NetHack-NetHack-3.6.6_Released/src/cmd.c
++++ newdir/src/cmd.c
+@@ -764,12 +764,15 @@
+ STATIC_PTR int
+ wiz_wish(VOID_ARGS) /* Unlimited wishes for debug mode by Paul Polderman */
+ {
+-    if (wizard) {
++    if (TRUE || wizard) {
+         boolean save_verbose = flags.verbose;
++	boolean save_wizard = wizard;
+ 
+         flags.verbose = FALSE;
++	wizard = TRUE;
+         makewish();
+         flags.verbose = save_verbose;
++	wizard = save_wizard;
+         (void) encumber_msg();
+     } else
+         pline(unavailcmd, visctrl((int) cmd_from_func(wiz_wish)));
+@@ -3540,7 +3543,7 @@
+     { '\0', "wizwhere", "show locations of special levels",
+             wiz_where, IFBURIED | AUTOCOMPLETE | WIZMODECMD },
+     { C('w'), "wizwish", "wish for something",
+-            wiz_wish, IFBURIED | AUTOCOMPLETE | WIZMODECMD },
++            wiz_wish, IFBURIED | AUTOCOMPLETE  },
+     { '\0', "wmode", "show wall modes",
+             wiz_show_wmodes, IFBURIED | AUTOCOMPLETE | WIZMODECMD },
+     { 'z', "zap", "zap a wand", dozap },

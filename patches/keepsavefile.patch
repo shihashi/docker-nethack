@@ -1,0 +1,22 @@
+--- NetHack-NetHack-3.6.6_Released/src/restore.c
++++ newdir/src/restore.c
+@@ -898,7 +898,7 @@
+     restlevelstate(stuckid, steedid);
+     program_state.something_worth_saving = 1; /* useful data now exists */
+ 
+-    if (!wizard && !discover)
++    if (FALSE && !wizard && !discover)
+         (void) delete_savefile();
+     if (Is_rogue_level(&u.uz))
+         assign_graphics(ROGUESET);
+--- NetHack-NetHack-3.6.6_Released/sys/unix/unixmain.c
++++ newdir/sys/unix/unixmain.c
+@@ -307,7 +307,7 @@
+         if (dorecover(fd)) {
+             resuming = TRUE; /* not starting new game */
+             wd_message();
+-            if (discover || wizard) {
++            if (TRUE || discover || wizard) {
+                 /* this seems like a candidate for paranoid_confirmation... */
+                 if (yn("Do you want to keep the save file?") == 'n') {
+                     (void) delete_savefile();

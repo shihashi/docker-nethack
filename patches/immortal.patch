@@ -1,0 +1,11 @@
+--- NetHack-NetHack-3.6.6_Released/src/end.c
++++ newdir/src/end.c
+@@ -1185,7 +1185,7 @@
+         }
+     }
+     /* explore and wizard modes offer player the option to keep playing */
+-    if (!survive && (wizard || discover) && how <= GENOCIDED
++    if (!survive && (TRUE || wizard || discover) && how <= GENOCIDED
+         && !paranoid_query(ParanoidDie, "Die?")) {
+         pline("OK, so you don't %s.", (how == CHOKING) ? "choke" : "die");
+         iflags.last_msg = PLNMSG_OK_DONT_DIE;

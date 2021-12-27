@@ -1,37 +1,95 @@
-#!/bin/sh
+#!/bin/bash
 
 # local settings
 localdir=~
 localdotfiledir="${localdir}"
 localvardir="${localdir}/nethackdir"
+defaultimage="shihashi/nethack"
 
+localsavedir="${localvardir}/save"
+localbonesdir="${localvardir}/bones"
 
 containerdotfiledir="/root"
 containervardir="/nethack/games/lib/nethackdir"
 
 logfiles="logfile record xlogfile"
 
-if [ ! -e ${localdotfiledir}/.nethackrc ]; then
-    touch ${localdotfiledir}/.nethackrc
-fi
-args="-v ${localdotfiledir}/.nethackrc:${containerdotfiledir}/.nethackrc"
+usage () {
+    echo
+    echo "Usage: nethack [OPTIONS] [NETHACKOPTIONS]"
+    echo
+    echo "Options:"
+    echo "  -i, --image smage    Spesify an image to derive the container from"
+    echo
 
-if [ ! -d ${localvardir} ]; then
-    mkdir -p ${localvardir}
-fi
+    exit 1
+}
+
+checkfile () {
+    if [ -e $1 ]; then
+        if [ ! -f $1 ]; then
+            echo "$1 exists but is not a normal file."
+            exit 1
+        fi
+    else
+        touch $1
+    fi
+}
+
+checkdir () {
+    if [ -e $1 ]; then
+        if [ ! -d $1 ]; then
+            echo "$1 exists but is not a directory."
+            exit 1
+        fi
+    else
+        mkdir -p $1
+    fi
+}
+
+image="$defaultimage"
+pass=0
+
+for opt in "$@"
+do
+    if [[ $pass -eq 0 ]]; then
+        case $opt in
+            -i | --image)
+                if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
+                    usage
+                fi
+                image="$2"
+                shift 2
+                pass=1
+                ;;
+            *)
+                nethackargs+=("$1")
+                shift 1
+                ;;
+        esac
+    else
+        pass=0
+    fi
+done
+
+
+checkfile $localdotfiledir/.nethackrc
+args=("-v")
+args+=("${localdotfiledir}/.nethackrc:${containerdotfiledir}/.nethackrc")
+
+checkdir $localvardir
 
 for f in $logfiles
 do
-    if [ ! -e ${localvardir}/$f ]; then
-        touch ${localvardir}/$f
-    fi
-    args="${args} -v ${localvardir}/$f:${containervardir}/$f"
+    checkfile $localvardir/$f
+    args+=("-v" "${localvardir}/$f:${containervardir}/$f")
 done
 
-if [ ! -d ${localvardir}/save ]; then
-    mkdir -p ${localvardir}/save
-fi
+checkdir $localsavedir
+args+=("-v" "${localsavedir}:${containervardir}/save")
 
-args="${args} -v ${localvardir}/save:${containervardir}/save"
+checkdir $localbonesdir
+args+=("-v" "${localbonesdir}:/bones")
 
-docker run --rm -it --name nethack $args shihashi/nethack "$@"
+
+docker run --rm -it --name nethack "${args[@]}" "$image" "${nethackargs[@]}"
