@@ -21,7 +21,7 @@ Apply the patch and build.
 ```
 $ git clone https://github.com/shihashi/docker-nethack
 $ cd docker-nethack/docker
-$ cp ../patches/createmonster.patch NetHack.patch
+$ ln -sf ../patches/monster.patch NetHack.patch
 $ docker build -t nethack-monster .
 ```
 Then launch `nethack` with the newly build image.

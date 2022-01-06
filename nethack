@@ -9,6 +9,8 @@ defaultimage="shihashi/nethack"
 localsavedir="${localvardir}/save"
 localbonesdir="${localvardir}/bones"
 
+localtzfile="/etc/localtime"
+
 containerdotfiledir="/root"
 containervardir="/nethack/games/lib/nethackdir"
 
@@ -19,7 +21,8 @@ usage () {
     echo "Usage: nethack [OPTIONS] [NETHACKOPTIONS]"
     echo
     echo "Options:"
-    echo "  -i, --image smage    Spesify an image to derive the container from"
+    echo "  -i, --image image    Spesify an image to derive the container from"
+    echo "  --timezone ID        Set the timezone"
     echo
 
     exit 1
@@ -91,5 +94,8 @@ args+=("-v" "${localsavedir}:${containervardir}/save")
 checkdir $localbonesdir
 args+=("-v" "${localbonesdir}:/bones")
 
+if [ -f /etc/localtime ]; then
+    args+=("-v" "$localtzfile:/localtime")
+fi
 
 docker run --rm -it --name nethack "${args[@]}" "$image" "${nethackargs[@]}"
