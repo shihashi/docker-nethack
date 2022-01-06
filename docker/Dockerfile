@@ -10,7 +10,7 @@ RUN apk add --no-cache curl gcc make groff musl-dev ncurses-dev bison flex linux
         -i hints/linux
 COPY ./NetHack.patch /NetHack.patch
 RUN if [ -s NetHack.patch ]; then \
-        patch -u -p1 -d NetHack-NetHack-${PKGVER}_Released \ 
+        patch -u -p1 -d NetHack-NetHack-${PKGVER}_Released \
             < NetHack.patch; \
     fi && \
     cd NetHack-NetHack-${PKGVER}_Released && \
@@ -23,7 +23,7 @@ RUN if [ -s NetHack.patch ]; then \
     rm -rf NetHack-NetHack-${PKGVER}_Released
 
 FROM alpine
-RUN apk add --no-cache ncurses-libs
+RUN apk add --no-cache ncurses-libs tzdata bash
 COPY --from=builder /nethack /nethack
 COPY ./entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
